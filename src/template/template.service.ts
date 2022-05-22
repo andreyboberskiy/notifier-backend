@@ -7,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import analytic from 'analytic';
-import { Repository } from 'typeorm';
+import { GetTemplatesDto } from 'template/dto/get-templates.dto';
+import { Like, Repository } from 'typeorm';
 
 import { ParserService } from 'parser/parser.service';
 import { CreateTemplateDto } from 'template/dto/create-template.dto';
@@ -33,6 +34,7 @@ export class TemplateService {
       checkUrl,
       notifyPhrase,
     } = createTemplateDto;
+
     const checkData = await this.parserService.getDataBySingleSelector(
       checkUrl,
       selector,
@@ -97,5 +99,20 @@ export class TemplateService {
     if (!template)
       throw new NotFoundException('Template with this id not found');
     return template;
+  }
+
+  async getTemplates(payload: GetTemplatesDto, userId: number) {
+    const { authorId, name, offset, limit = 10 } = payload;
+
+    const templates = await this.templateRepository.find({
+      skip: offset,
+      take: limit,
+      where: {
+        author: { id: authorId },
+        name: name ? Like(`%${name}%`) : undefined,
+      },
+    });
+
+    return templates;
   }
 }

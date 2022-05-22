@@ -11,7 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'auth/auth.service';
 import { GetUser, Public } from 'auth/decorators';
 import { SignInDto, SignUpDto } from 'auth/dto';
-import { Tokens } from 'auth/types';
+import { SignResponse } from 'auth/types';
 
 @Controller('auth')
 export class AuthController {
@@ -20,14 +20,14 @@ export class AuthController {
   @Public()
   @Post('/sign-up')
   @HttpCode(HttpStatus.CREATED)
-  signUp(@Body(ValidationPipe) signUpDto: SignUpDto): Promise<Tokens> {
+  signUp(@Body(ValidationPipe) signUpDto: SignUpDto): Promise<SignResponse> {
     return this.authService.signUp(signUpDto);
   }
 
   @Public()
   @Post('/sign-in')
   @HttpCode(HttpStatus.OK)
-  signIn(@Body(ValidationPipe) signInDto: SignInDto): Promise<Tokens> {
+  signIn(@Body(ValidationPipe) signInDto: SignInDto): Promise<SignResponse> {
     return this.authService.signIn(signInDto);
   }
 

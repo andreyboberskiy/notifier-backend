@@ -7,11 +7,11 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import analytic from 'analytic';
 import { SignInDto } from 'auth/dto/sign-in.dto';
-import { Tokens } from 'auth/types';
+import { SignResponse, Tokens } from 'auth/types';
 import * as bcrypt from 'bcrypt';
 import { SignUpDto } from 'auth/dto/sign-up.dto';
 import config from 'config/config';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from 'user/entity/user.entity';
 
 @Injectable()
@@ -50,7 +50,7 @@ export class AuthService {
     await this.userRepository.update({ id: userId }, { rtHash: hashedToken });
   }
 
-  async signUp(signUpDto: SignUpDto): Promise<Tokens> {
+  async signUp(signUpDto: SignUpDto): Promise<SignResponse> {
     const { username, email, password } = signUpDto;
 
     const candidate = await this.userRepository.findOneBy([
@@ -68,11 +68,11 @@ export class AuthService {
 
     const hashedPassword = await this.hashData(password);
 
-    const user = new User();
-    user.email = email;
-    user.username = username;
-    user.password = hashedPassword;
-
+    const user = this.userRepository.create({
+      email,
+      username,
+      password: hashedPassword,
+    });
     await this.userRepository.save(user);
 
     const tokens = await this.getTokens(user.id);
@@ -80,15 +80,15 @@ export class AuthService {
 
     analytic.send('Registered', user.id);
 
-    return tokens;
+    return { tokens, user };
   }
 
-  async signIn(signInDto: SignInDto): Promise<Tokens> {
-    const { username, email, password } = signInDto;
+  async signIn(signInDto: SignInDto): Promise<SignResponse> {
+    const { login, password } = signInDto;
 
     const user = await this.userRepository.findOne({
-      where: [{ email }, { username }],
-      select: ['id', 'password'],
+      where: [{ email: login }, { username: login }],
+      select: ['id', 'password', 'email', 'username'],
     });
 
     if (!user) {
@@ -105,7 +105,9 @@ export class AuthService {
 
     analytic.send('Login', user.id);
 
-    return tokens;
+    const { password: _, ...restUser } = user;
+
+    return { tokens, user: restUser };
   }
 
   async refreshToken(userId: number, refreshToken: string) {
