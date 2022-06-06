@@ -1,0 +1,31 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    container_name: postgres-db
+    volumes:
+      - ./notifier-pgdata:/var/lib/postgresql/data
+  notifier:
+    image: kortez1337/notifier-backend:latest
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - APP_PORT=${APP_PORT}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - MIXPANEL_TOKEN=${MIXPANEL_TOKEN}
+    ports:
+      - "1:3000"
+    container_name: notifier-backend-container
+    depends_on:
+      - db
+volumes:
+  notifier-pgdata:

@@ -1,5 +1,7 @@
+const isDev = process.env.APP_MODE === 'development';
+
 const config = {
-  isDev: process.env.NODE_ENV,
+  isDev,
   mixPanel: { token: process.env.MIXPANEL_TOKEN },
   auth: {
     accessSecret: process.env.JWT_ACCESS_SECRET,
@@ -10,9 +12,9 @@ const config = {
     host: process.env.POSTGRES_HOST,
     port: +process.env.POSTGRES_PORT,
     username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASS,
+    password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    logging: true,
+    logging: isDev,
     synchronize: true,
     name: 'default',
     entities: [__dirname + '/**/*.entity.ts', __dirname + '/**/*.entity.js'],
