@@ -6,6 +6,7 @@ import {
   IsNumber,
   Min,
   Max,
+  IsBoolean,
 } from 'class-validator';
 
 export class GetTemplatesDto {
@@ -30,4 +31,9 @@ export class GetTemplatesDto {
   @IsOptional()
   @IsString()
   name: string;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  withAuthor: boolean;
 }

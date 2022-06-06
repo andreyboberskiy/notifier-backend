@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import analytic from 'analytic';
 import { SignInDto } from 'auth/dto/sign-in.dto';
-import { SignResponse, Tokens } from 'auth/types';
+import { Tokens } from 'auth/types';
 import * as bcrypt from 'bcrypt';
 import { SignUpDto } from 'auth/dto/sign-up.dto';
 import config from 'config/config';
@@ -50,7 +50,7 @@ export class AuthService {
     await this.userRepository.update({ id: userId }, { rtHash: hashedToken });
   }
 
-  async signUp(signUpDto: SignUpDto): Promise<SignResponse> {
+  async signUp(signUpDto: SignUpDto): Promise<Tokens> {
     const { username, email, password } = signUpDto;
 
     const candidate = await this.userRepository.findOneBy([
@@ -80,10 +80,10 @@ export class AuthService {
 
     analytic.send('Registered', user.id);
 
-    return { tokens, user };
+    return tokens;
   }
 
-  async signIn(signInDto: SignInDto): Promise<SignResponse> {
+  async signIn(signInDto: SignInDto): Promise<Tokens> {
     const { login, password } = signInDto;
 
     const user = await this.userRepository.findOne({
@@ -105,9 +105,7 @@ export class AuthService {
 
     analytic.send('Login', user.id);
 
-    const { password: _, ...restUser } = user;
-
-    return { tokens, user: restUser };
+    return tokens;
   }
 
   async refreshToken(userId: number, refreshToken: string) {

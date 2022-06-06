@@ -102,8 +102,13 @@ export class TemplateService {
   }
 
   async getTemplates(payload: GetTemplatesDto, userId: number) {
-    const { authorId, name, offset, limit = 10 } = payload;
+    const { authorId, name, offset, limit = 10, withAuthor = false } = payload;
 
+    console.log(payload);
+    const relations = [];
+    if (withAuthor) {
+      relations.push('author');
+    }
     const templates = await this.templateRepository.find({
       skip: offset,
       take: limit,
@@ -111,6 +116,7 @@ export class TemplateService {
         author: { id: authorId },
         name: name ? Like(`%${name}%`) : undefined,
       },
+      relations,
     });
 
     return templates;
