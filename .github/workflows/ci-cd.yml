@@ -1,0 +1,11 @@
+name: GitHub Actions Demo
+on:
+  push:
+      branches:
+        - master
+jobs:
+  build-and-deploy-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker build -f ./devops/prod/Dockerfile -t kortez1337/notifier-backend:latest .
+      - run: docker push kortez1337/notifier-backend:latest
