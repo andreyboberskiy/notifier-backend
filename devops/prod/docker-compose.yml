@@ -23,7 +23,7 @@ services:
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - MIXPANEL_TOKEN=${MIXPANEL_TOKEN}
     ports:
-      - "1:3000"
+      - "10:3000"
     container_name: notifier-backend-container
     depends_on:
       - db

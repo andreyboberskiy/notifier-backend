@@ -3,7 +3,7 @@ on:
 off:
 	docker-compose down -v
 restart:
-	docker-compose restart
+	docker-compose pull && docker-compose restart
 logs:
 	docker-compose  logs -f
 attach:

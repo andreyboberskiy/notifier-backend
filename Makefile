@@ -10,3 +10,5 @@ logs:
 	docker-compose -f ./devops/dev/docker-compose.yml logs -f
 attach:
 	docker  attach notifier-backend-container
+devops-to-prod:
+	scp -i /Users/andreyboberskiy/.ssh/my_vps ./devops/prod/.env ./devops/prod/Makefile ./devops/prod/docker-compose.yml root@93.115.21.78:/root/apps/notifier/backend
