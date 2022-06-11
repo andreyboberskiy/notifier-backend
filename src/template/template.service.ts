@@ -101,10 +101,9 @@ export class TemplateService {
     return template;
   }
 
-  async getTemplates(payload: GetTemplatesDto, userId: number) {
+  async getTemplates(payload: GetTemplatesDto) {
     const { authorId, name, offset, limit = 10, withAuthor = false } = payload;
 
-    console.log(payload);
     const relations = [];
     if (withAuthor) {
       relations.push('author');

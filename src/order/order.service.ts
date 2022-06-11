@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -12,6 +11,7 @@ import { OrderCheckerService } from 'order-checker/order-checker.service';
 import { OrderHistoryService } from 'order-history/order-history.service';
 
 import { CreateOrderDto } from 'order/dto/create-order.dto';
+import { GetMyOrdersDto } from 'order/dto/get-my-orders.dto';
 import { Order } from 'order/entity/order.entity';
 import { ParserService } from 'parser/parser.service';
 import { TemplateService } from 'template/template.service';
@@ -28,7 +28,32 @@ export class OrderService {
     private templateService: TemplateService,
   ) {}
 
-  async create(userId, createOrderDto: CreateOrderDto) {
+  async getById(userId, orderId) {
+    const order = await this.orderRepository.findOneBy({
+      id: orderId,
+      user: userId,
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return order;
+  }
+
+  async getMy(userId, params: GetMyOrdersDto) {
+    const { offset, limit = 10 } = params;
+
+    const orders = await this.orderRepository.find({
+      where: { user: userId },
+      skip: offset,
+      take: limit,
+    });
+
+    return orders;
+  }
+
+  async create(user, createOrderDto: CreateOrderDto) {
     const {
       url,
       templateId,
@@ -66,6 +91,7 @@ export class OrderService {
       notifyPhrase: notifyPhrase || template.notifyPhrase,
       checkInterval,
       checkIntervalUnit,
+      user,
     };
 
     const order = await this.orderRepository.create(payload);
@@ -82,7 +108,7 @@ export class OrderService {
       await this.orderCheckerService.addOrderForChecking(order);
     }
 
-    analytic.send('Order created', userId);
+    analytic.send('Order created', user.id);
 
     return order;
   }

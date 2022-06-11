@@ -35,7 +35,7 @@ export class OrderCheckerService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
-    // await this.startCheckingAllOrder();
+    await this.startCheckingAllOrder();
   }
 
   generateOrderChecker(

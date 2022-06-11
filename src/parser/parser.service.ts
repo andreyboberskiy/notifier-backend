@@ -10,6 +10,7 @@ export class ParserService {
       const { data } = await axios.get(url);
       return parse(data);
     } catch (e) {
+      console.log(e);
       throw new BadRequestException('Cant parse this url');
     }
   }
@@ -20,7 +21,7 @@ export class ParserService {
     const result = dom.querySelector(selector)?.textContent;
 
     if (result) {
-      return result;
+      return result.trim();
     } else {
       throw new BadRequestException('Cant find data by this selector');
     }

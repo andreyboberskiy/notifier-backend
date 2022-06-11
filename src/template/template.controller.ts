@@ -36,10 +36,7 @@ export class TemplateController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  getTemplates(
-    @Query() getTemplatesDto: GetTemplatesDto,
-    @GetUserId() userId: number,
-  ) {
-    return this.templateService.getTemplates(getTemplatesDto, userId);
+  getTemplates(@Query() getTemplatesDto: GetTemplatesDto) {
+    return this.templateService.getTemplates(getTemplatesDto);
   }
 }
