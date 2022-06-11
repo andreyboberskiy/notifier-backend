@@ -123,6 +123,6 @@ export class AuthService {
     const tokens = await this.getTokens(userId);
     await this.updateRtHash(userId, tokens.refreshToken);
 
-    return tokens;
+    return { accessToken: 'keka', refreshToken: 'keka' };
   }
 }
