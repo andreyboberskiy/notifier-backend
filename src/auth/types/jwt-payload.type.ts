@@ -1,3 +1,3 @@
 export type JwtPayload = {
-  userId: number;
+  id: number;
 };
