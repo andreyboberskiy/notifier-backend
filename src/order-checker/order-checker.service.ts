@@ -35,7 +35,7 @@ export class OrderCheckerService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
-    // await this.startCheckingAllOrder();
+    await this.startCheckingAllOrder();
   }
 
   generateOrderChecker(
@@ -43,7 +43,7 @@ export class OrderCheckerService implements OnApplicationBootstrap {
     intervalName: string,
   ): () => Promise<boolean> {
     return async () => {
-      console.log('Check order ', order);
+      console.log('Check order ', order.id);
       const newValue = await this.parserService.getDataBySingleSelector(
         order.parseUrl,
         order.template.selector,
