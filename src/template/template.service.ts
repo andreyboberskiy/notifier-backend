@@ -33,6 +33,7 @@ export class TemplateService {
       userId,
       checkUrl,
       notifyPhrase,
+      parseType,
     } = createTemplateDto;
 
     const checkData = await this.parserService.getDataBySingleSelector(
@@ -40,13 +41,14 @@ export class TemplateService {
       selector,
     );
 
-    const templatePayload = {
+    const templatePayload: Partial<Template> = {
       name,
       description,
       siteUrl,
       selector,
       notifyPhrase,
       author: null,
+      parseType,
     };
 
     if (userId) {

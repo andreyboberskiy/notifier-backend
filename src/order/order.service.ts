@@ -15,6 +15,7 @@ import { GetMyOrdersDto } from 'order/dto/get-my-orders.dto';
 import { Order } from 'order/entity/order.entity';
 import { ParserService } from 'parser/parser.service';
 import { TemplateService } from 'template/template.service';
+import { ParseTypeEnums } from 'template/types/parse-type-enums.type';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -27,6 +28,38 @@ export class OrderService {
     private orderHistoryService: OrderHistoryService,
     private templateService: TemplateService,
   ) {}
+
+  async toggleActivity(orderId: number, userId: number, activate: boolean) {
+    const order = await this.orderRepository.findOne({
+      where: {
+        user: { id: userId },
+        id: orderId,
+      },
+      relations: ['template'],
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (activate) {
+      if (order.active) {
+        throw new BadRequestException('Order already active');
+      }
+      order.active = true;
+      await order.save();
+      await this.orderCheckerService.addOrderForChecking(order);
+    } else {
+      if (!order.active) {
+        throw new BadRequestException('Order already inactive');
+      }
+      order.active = false;
+      await order.save();
+      await this.orderCheckerService.removeOrderFromChecking(order.id);
+    }
+
+    return order;
+  }
 
   async getById(userId, orderId) {
     const order = await this.orderRepository.findOneBy({
@@ -83,7 +116,7 @@ export class OrderService {
       template.selector,
     );
 
-    const payload = {
+    const payload: Partial<Order> = {
       parseUrl: url,
       template,
       compareValue,
@@ -92,6 +125,7 @@ export class OrderService {
       checkInterval,
       checkIntervalUnit,
       user,
+      disableAfterTriggering: template.parseType === ParseTypeEnums.list,
     };
 
     const order = await this.orderRepository.create(payload);
