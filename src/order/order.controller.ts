@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { GetUser, GetUserId } from 'auth/decorators';
@@ -20,11 +21,23 @@ export class OrderController {
   constructor(private orderService: OrderService) {}
 
   @Post('/create')
+  @HttpCode(HttpStatus.OK)
   create(
     @GetUser() user: User,
     @Body() createOrderDto: CreateOrderDto,
   ): Promise<Order> {
     return this.orderService.create(user, createOrderDto);
+  }
+
+  @Put('/activate/:id')
+  @HttpCode(HttpStatus.OK)
+  activate(@GetUserId() userId: number, @Param() params): Promise<Order> {
+    return this.orderService.toggleActivity(params.id, userId, true);
+  }
+  @Put('/deactivate/:id')
+  @HttpCode(HttpStatus.OK)
+  deactivate(@GetUserId() userId: number, @Param() params): Promise<Order> {
+    return this.orderService.toggleActivity(params.id, userId, false);
   }
 
   @Get('my')

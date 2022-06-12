@@ -43,6 +43,9 @@ export class Order extends BaseEntity {
   @Column({ type: 'boolean', default: true })
   active: boolean;
 
+  @Column({ type: 'boolean', default: true })
+  disableAfterTriggering: boolean;
+
   @ManyToOne(() => Template, (template) => template.orders, { eager: false })
   template: Template;
 

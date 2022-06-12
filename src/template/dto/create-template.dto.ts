@@ -7,11 +7,12 @@ import {
   IsNotEmpty,
   IsNumber,
 } from 'class-validator';
+import { ParseTypeEnums } from 'template/types/parse-type-enums.type';
 
 export class CreateTemplateDto {
   @IsString()
   @MinLength(4)
-  @MaxLength(32)
+  @MaxLength(70)
   name: string;
 
   @IsOptional()
@@ -41,4 +42,8 @@ export class CreateTemplateDto {
   @MinLength(4)
   @MaxLength(200)
   notifyPhrase: string;
+
+  @IsOptional()
+  @IsNumber()
+  parseType: ParseTypeEnums;
 }

@@ -1,4 +1,5 @@
 import { Order } from 'order/entity/order.entity';
+import { ParseTypeEnums } from 'template/types/parse-type-enums.type';
 import {
   BaseEntity,
   Column,
@@ -29,8 +30,16 @@ export class Template extends BaseEntity {
   @Column({ type: 'boolean', default: true })
   draft: boolean;
 
-  @Column({ type: 'boolean', default: false })
+  // TODO: Implement CMS for template approving
+  @Column({ type: 'boolean', default: true })
   approved: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: ParseTypeEnums,
+    default: ParseTypeEnums.singleValue,
+  })
+  parseType: ParseTypeEnums;
 
   @Column({ type: 'varchar', length: 200 })
   notifyPhrase: string;
