@@ -6,8 +6,10 @@ import {
   IsUrl,
   IsNotEmpty,
   IsNumber,
+  IsEnum,
+  IsArray,
 } from 'class-validator';
-import { ParseTypeEnums } from 'template/types/parse-type-enums.type';
+import { ParseTypeEnum } from 'template/types/parse-type-enums.type';
 
 export class CreateTemplateDto {
   @IsString()
@@ -43,7 +45,14 @@ export class CreateTemplateDto {
   @MaxLength(200)
   notifyPhrase: string;
 
+  @IsEnum(ParseTypeEnum)
+  parseType: ParseTypeEnum;
+
   @IsOptional()
-  @IsNumber()
-  parseType: ParseTypeEnums;
+  @IsArray()
+  excludedSelectors: string[];
+
+  @IsOptional()
+  @IsArray()
+  grabConfig: { label: string; selector: string }[];
 }

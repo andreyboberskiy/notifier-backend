@@ -34,12 +34,17 @@ export class TemplateService {
       checkUrl,
       notifyPhrase,
       parseType,
+      excludedSelectors,
+      grabConfig,
     } = createTemplateDto;
 
-    const checkData = await this.parserService.getDataBySingleSelector(
-      checkUrl,
+    const checkData = await this.parserService.getCheckData({
+      parseType,
+      siteUrl: checkUrl,
       selector,
-    );
+      excludedSelectors,
+      grabConfig,
+    });
 
     const templatePayload: Partial<Template> = {
       name,
