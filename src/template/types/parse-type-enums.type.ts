@@ -1,4 +1,4 @@
-export enum ParseTypeEnums {
-  singleValue,
-  list,
+export enum ParseTypeEnum {
+  singleValue = 'singleValue',
+  list = 'list',
 }

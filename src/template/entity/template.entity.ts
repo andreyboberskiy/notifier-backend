@@ -1,5 +1,5 @@
 import { Order } from 'order/entity/order.entity';
-import { ParseTypeEnums } from 'template/types/parse-type-enums.type';
+import { ParseTypeEnum } from 'template/types/parse-type-enums.type';
 import {
   BaseEntity,
   Column,
@@ -36,10 +36,9 @@ export class Template extends BaseEntity {
 
   @Column({
     type: 'enum',
-    enum: ParseTypeEnums,
-    default: ParseTypeEnums.singleValue,
+    enum: ParseTypeEnum,
   })
-  parseType: ParseTypeEnums;
+  parseType: ParseTypeEnum;
 
   @Column({ type: 'varchar', length: 200 })
   notifyPhrase: string;

@@ -9,7 +9,7 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import { Checkers } from 'order-checker/checkers';
 import { Order } from 'order/entity/order.entity';
 import { OrderService } from 'order/order.service';
-import { ParseTypeEnums } from 'template/types/parse-type-enums.type';
+import { ParseTypeEnum } from 'template/types/parse-type-enums.type';
 import { convertTimeValuesToSeconds, getOrderIntervalName } from 'utils';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class OrderCheckerService implements OnApplicationBootstrap {
   }
 
   checkerByParseType = {
-    [ParseTypeEnums.singleValue]: this.checkers.singleValue,
+    [ParseTypeEnum.singleValue]: this.checkers.singleValue,
   };
 
   private generateOrderChecker(order: Order): () => Promise<boolean> {

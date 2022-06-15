@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { GetUserId } from 'auth/decorators';
+import { CheckDataResponse } from 'parser/parser.types';
 
 import { CreateTemplateDto } from 'template/dto/create-template.dto';
 import { GetTemplatesDto } from 'template/dto/get-templates.dto';
@@ -24,7 +25,10 @@ export class TemplateController {
   create(
     @GetUserId() userId,
     @Body() createTemplateDto: CreateTemplateDto,
-  ): Promise<{ template: Template; checkData: string }> {
+  ): Promise<{
+    template: Template;
+    checkData: CheckDataResponse;
+  }> {
     return this.templateService.create({ ...createTemplateDto, userId });
   }
 

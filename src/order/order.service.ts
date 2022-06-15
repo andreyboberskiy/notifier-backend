@@ -15,7 +15,7 @@ import { GetMyOrdersDto } from 'order/dto/get-my-orders.dto';
 import { Order } from 'order/entity/order.entity';
 import { ParserService } from 'parser/parser.service';
 import { TemplateService } from 'template/template.service';
-import { ParseTypeEnums } from 'template/types/parse-type-enums.type';
+import { ParseTypeEnum } from 'template/types/parse-type-enums.type';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -111,10 +111,11 @@ export class OrderService {
       );
     }
 
-    const compareValue = await this.parserService.getDataBySingleSelector(
-      url,
-      template.selector,
-    );
+    const { compareValue } = await this.parserService.getCheckData({
+      siteUrl: url,
+      parseType: template.parseType,
+      selector: template.selector,
+    });
 
     const payload: Partial<Order> = {
       parseUrl: url,
@@ -125,7 +126,7 @@ export class OrderService {
       checkInterval,
       checkIntervalUnit,
       user,
-      disableAfterTriggering: template.parseType === ParseTypeEnums.list,
+      disableAfterTriggering: template.parseType === ParseTypeEnum.list,
     };
 
     const order = await this.orderRepository.create(payload);
