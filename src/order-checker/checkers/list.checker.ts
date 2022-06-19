@@ -7,7 +7,7 @@ import { ParserService } from 'parser/parser.service';
 import { ParseTypeEnum } from 'template/types/parse-type-enums.type';
 import { replaceValues } from 'utils';
 
-const generateSingleValueChecker =
+const generateListChecker =
   ({
     parserService,
     orderHistoryService,
@@ -20,16 +20,14 @@ const generateSingleValueChecker =
     orderCheckerService: OrderCheckerService;
   }) =>
   async (order: Order): Promise<boolean> => {
-    console.log('Check order single value', order.id);
-
+    console.log('Check order list', order.id);
     const { compareValue: newValue } = await parserService.getCheckData({
-      parseType: ParseTypeEnum.singleValue,
+      parseType: ParseTypeEnum.list,
       siteUrl: order.parseUrl,
       selector: order.template.selector,
       grabConfig: order.template.grabConfig,
       excludedSelectors: order.template.excludedSelectors,
     });
-
     if (newValue !== order.compareValue) {
       await orderHistoryService.addHistory({
         title: 'Order triggered',
@@ -48,10 +46,12 @@ const generateSingleValueChecker =
 
       if (order.disableAfterTriggering) {
         order.active = false;
-        await order.save();
 
         await orderCheckerService.removeOrderFromChecking(order.id);
       }
+
+      order.compareValue = newValue;
+      await order.save();
 
       // triggered
       return true;
@@ -60,4 +60,4 @@ const generateSingleValueChecker =
     return false;
   };
 
-export default generateSingleValueChecker;
+export default generateListChecker;

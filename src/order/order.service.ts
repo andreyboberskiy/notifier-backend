@@ -126,7 +126,7 @@ export class OrderService {
       checkInterval,
       checkIntervalUnit,
       user,
-      disableAfterTriggering: template.parseType === ParseTypeEnum.list,
+      disableAfterTriggering: template.parseType === ParseTypeEnum.singleValue,
     };
 
     const order = await this.orderRepository.create(payload);

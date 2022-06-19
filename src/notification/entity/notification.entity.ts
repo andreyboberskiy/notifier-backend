@@ -12,10 +12,10 @@ export class Notification extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 70 })
+  @Column({ type: 'varchar', length: 200 })
   title: string;
 
-  @Column({ type: 'varchar', length: 200, nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   subtitle: string | null;
 
   @ManyToOne(() => User)

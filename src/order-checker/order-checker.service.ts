@@ -34,6 +34,7 @@ export class OrderCheckerService implements OnApplicationBootstrap {
 
   checkerByParseType = {
     [ParseTypeEnum.singleValue]: this.checkers.singleValue,
+    [ParseTypeEnum.list]: this.checkers.list,
   };
 
   private generateOrderChecker(order: Order): () => Promise<boolean> {
@@ -61,22 +62,23 @@ export class OrderCheckerService implements OnApplicationBootstrap {
     const intervalName = getOrderIntervalName(order.id);
     const callback = this.generateOrderChecker(order);
 
-    const triggered = await callback();
+    await callback();
 
-    if (!triggered) {
-      const interval = setInterval(
-        callback,
-        convertTimeValuesToSeconds(
-          order.checkInterval,
-          order.checkIntervalUnit,
-        ) * 1000,
-      );
-      this.schedulerRegistry.addInterval(intervalName, interval);
-      console.log(
-        'Order added for checking: ',
-        order.id,
-        this.schedulerRegistry.getIntervals(),
-      );
-    }
+    console.log(
+      convertTimeValuesToSeconds(order.checkInterval, order.checkIntervalUnit) *
+        1000,
+    );
+    const interval = setInterval(
+      callback,
+      convertTimeValuesToSeconds(order.checkInterval, order.checkIntervalUnit) *
+        1000,
+    );
+
+    this.schedulerRegistry.addInterval(intervalName, interval);
+    console.log(
+      'Order added for checking: ',
+      order.id,
+      this.schedulerRegistry.getIntervals(),
+    );
   }
 }

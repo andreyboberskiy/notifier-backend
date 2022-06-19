@@ -2,7 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { parse } from 'node-html-parser';
 import HTMLElement from 'node-html-parser/dist/nodes/html';
-import { CheckDataResponse } from 'parser/parser.types';
+import { CheckDataResponse, GrabConfigItem } from 'parser/parser.types';
+import { getGrabbedValues } from 'parser/utils';
 import { ParseTypeEnum } from 'template/types/parse-type-enums.type';
 
 @Injectable()
@@ -30,7 +31,7 @@ export class ParserService {
         });
       }
       case ParseTypeEnum.singleValue: {
-        return this.getSingleValue(siteUrl, selector);
+        return this.getSingleValue(siteUrl, selector, grabConfig);
       }
       default: {
         return null;
@@ -48,21 +49,28 @@ export class ParserService {
     }
   }
 
-  async getSingleValue(siteUrl: string, selector: string) {
+  private async getSingleValue(
+    siteUrl: string,
+    selector: string,
+    grabConfig: GrabConfigItem[],
+  ): Promise<{
+    compareValue: string;
+    grabbedValues: { [key: string]: string };
+  }> {
     const dom = await this.getDOM(siteUrl);
 
     const result = dom.querySelector(selector)?.textContent;
 
     if (result) {
       return {
-        compareValue: result.trim(),
-        grabbedValues: {},
+        compareValue: result.replace(/\s+/g, ' ').trim(),
+        grabbedValues: getGrabbedValues(dom, grabConfig),
       };
     } else {
       throw new BadRequestException('Cant find data by this selector');
     }
   }
-  async getListValues({
+  private async getListValues({
     siteUrl,
     selector,
     excludedSelectors,
@@ -92,12 +100,7 @@ export class ParserService {
 
       if (grabConfig) {
         grabbedValues = generalNodesWithoutExcluded.map((gn) =>
-          grabConfig.reduce((acc, rule) => {
-            acc[rule.label] =
-              gn.querySelector(rule.selector)?.textContent || '';
-
-            return acc;
-          }, {}),
+          getGrabbedValues(gn, grabConfig),
         );
       }
 
