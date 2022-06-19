@@ -58,7 +58,7 @@ export class Template extends BaseEntity {
   @Column({ type: 'varchar', length: 200 })
   notifyPhrase: string;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.templates, { nullable: true })
   author: User | number;
 
   @OneToMany(() => Order, (order) => order.template)

@@ -33,19 +33,21 @@ export class OrderCheckerService implements OnApplicationBootstrap {
   }
 
   checkerByParseType = {
-    [ParseTypeEnum.singleValue]: this.checkers.singleValue,
-    [ParseTypeEnum.list]: this.checkers.list,
+    [ParseTypeEnum.singleValue]: this.checkers.listAndSingleValueChecker,
+    [ParseTypeEnum.list]: this.checkers.listAndSingleValueChecker,
   };
 
-  private generateOrderChecker(order: Order): () => Promise<boolean> {
+  private generateOrderChecker(
+    order: Order,
+  ): (skipNotification?: boolean) => Promise<boolean> {
     const checker = this.checkerByParseType[order.template.parseType];
     if (!checker) {
       throw new BadRequestException(
         'Cant check template with this parse type: ' + order.template.parseType,
       );
     }
-    return () => {
-      return checker(order);
+    return (skipNotification) => {
+      return checker(order, skipNotification);
     };
   }
   public async removeOrderFromChecking(orderId: number) {
@@ -62,7 +64,7 @@ export class OrderCheckerService implements OnApplicationBootstrap {
     const intervalName = getOrderIntervalName(order.id);
     const callback = this.generateOrderChecker(order);
 
-    await callback();
+    await callback(true);
 
     console.log(
       convertTimeValuesToSeconds(order.checkInterval, order.checkIntervalUnit) *

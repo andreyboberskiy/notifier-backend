@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { NotificationService } from 'notification/notification.service';
-import generateListChecker from 'order-checker/checkers/list.checker';
-import generateSingleValueChecker from 'order-checker/checkers/singleValue.checker';
 import { OrderCheckerService } from 'order-checker/order-checker.service';
 import { OrderHistoryService } from 'order-history/order-history.service';
 import { ParserService } from 'parser/parser.service';
+
+import generateListAndSingleValueChecker from 'order-checker/checkers/listAndSingleValue.checker';
 
 @Injectable()
 export class Checkers {
@@ -17,13 +17,7 @@ export class Checkers {
     private notificationService: NotificationService,
   ) {}
 
-  public singleValue = generateSingleValueChecker({
-    parserService: this.parserService,
-    orderCheckerService: this.orderCheckerService,
-    notificationService: this.notificationService,
-    orderHistoryService: this.orderHistoryService,
-  });
-  public list = generateListChecker({
+  public listAndSingleValueChecker = generateListAndSingleValueChecker({
     parserService: this.parserService,
     orderCheckerService: this.orderCheckerService,
     notificationService: this.notificationService,

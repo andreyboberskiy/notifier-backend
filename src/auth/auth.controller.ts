@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from 'auth/auth.service';
 import { GetUser, Public } from 'auth/decorators';
 import { SignInDto, SignUpDto } from 'auth/dto';
@@ -19,7 +19,6 @@ import { Tokens } from 'auth/types';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiOkResponse({ type: Tokens })
   @Public()
   @Post('/sign-up')
   @HttpCode(HttpStatus.CREATED)

@@ -1,13 +1,13 @@
 import analytic from 'analytic';
 import { NotificationService } from 'notification/notification.service';
+import { NotificationTypeEnum } from 'notification/notification.types';
 import { OrderCheckerService } from 'order-checker/order-checker.service';
 import { OrderHistoryService } from 'order-history/order-history.service';
 import { Order } from 'order/entity/order.entity';
 import { ParserService } from 'parser/parser.service';
-import { ParseTypeEnum } from 'template/types/parse-type-enums.type';
 import { replaceValues } from 'utils';
 
-const generateSingleValueChecker =
+const generateListAndSingleValueChecker =
   ({
     parserService,
     orderHistoryService,
@@ -19,11 +19,11 @@ const generateSingleValueChecker =
     notificationService: NotificationService;
     orderCheckerService: OrderCheckerService;
   }) =>
-  async (order: Order): Promise<boolean> => {
-    console.log('Check order single value', order.id);
+  async (order: Order, skipNotification?: boolean): Promise<boolean> => {
+    console.log('Check order: ', order.template.parseType, order.id);
 
     const { compareValue: newValue } = await parserService.getCheckData({
-      parseType: ParseTypeEnum.singleValue,
+      parseType: order.template.parseType,
       siteUrl: order.parseUrl,
       selector: order.template.selector,
       grabConfig: order.template.grabConfig,
@@ -31,6 +31,11 @@ const generateSingleValueChecker =
     });
 
     if (newValue !== order.compareValue) {
+      order.compareValue = newValue;
+      await order.save();
+      if (skipNotification) {
+        return true;
+      }
       await orderHistoryService.addHistory({
         title: 'Order triggered',
         description: 'Order was triggered by new value: ' + newValue,
@@ -42,6 +47,8 @@ const generateSingleValueChecker =
           { template: '<>value</>', value: newValue },
         ]),
         user: order.user,
+        type: NotificationTypeEnum.orderTriggered,
+        data: { orderId: order.id },
       });
 
       analytic.send('Order triggered', order.user.id);
@@ -60,4 +67,4 @@ const generateSingleValueChecker =
     return false;
   };
 
-export default generateSingleValueChecker;
+export default generateListAndSingleValueChecker;
