@@ -9,6 +9,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetUser, GetUserId } from 'auth/decorators';
 import { CreateOrderDto } from 'order/dto/create-order.dto';
 import { GetMyOrdersDto } from 'order/dto/get-my-orders.dto';
@@ -16,6 +17,8 @@ import { Order } from 'order/entity/order.entity';
 import { OrderService } from 'order/order.service';
 import { User } from 'user/entity/user.entity';
 
+@ApiTags('order')
+@ApiBearerAuth()
 @Controller('order')
 export class OrderController {
   constructor(private orderService: OrderService) {}
