@@ -40,10 +40,25 @@ export class Template extends BaseEntity {
   })
   parseType: ParseTypeEnum;
 
+  @Column({
+    type: 'jsonb',
+    array: false,
+    default: () => "'[]'",
+    nullable: false,
+  })
+  grabConfig: { label: string; selector: string }[];
+
+  @Column('varchar', {
+    array: true,
+    default: [],
+    nullable: false,
+  })
+  excludedSelectors: string[];
+
   @Column({ type: 'varchar', length: 200 })
   notifyPhrase: string;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.templates, { nullable: true })
   author: User | number;
 
   @OneToMany(() => Order, (order) => order.template)

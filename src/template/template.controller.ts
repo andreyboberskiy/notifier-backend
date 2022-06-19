@@ -8,6 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUserId } from 'auth/decorators';
 import { CheckDataResponse } from 'parser/parser.types';
 
@@ -16,6 +17,8 @@ import { GetTemplatesDto } from 'template/dto/get-templates.dto';
 import { Template } from 'template/entity/template.entity';
 import { TemplateService } from 'template/template.service';
 
+@ApiTags('template')
+@ApiBearerAuth()
 @Controller('template')
 export class TemplateController {
   constructor(private templateService: TemplateService) {}

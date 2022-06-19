@@ -54,6 +54,8 @@ export class TemplateService {
       notifyPhrase,
       author: null,
       parseType,
+      grabConfig,
+      excludedSelectors,
     };
 
     if (userId) {

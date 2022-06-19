@@ -20,7 +20,7 @@ export class OrderHistory extends BaseEntity {
   @Column()
   description: string;
 
-  @ManyToOne(() => Order)
+  @ManyToOne(() => Order, (order) => order.history)
   order: Order;
 
   @CreateDateColumn({ type: 'timestamp' })

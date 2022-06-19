@@ -1,12 +1,15 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsOptional, IsNotEmpty, IsNumber, Min, Max } from 'class-validator';
 
 export class GetMyOrdersDto {
+  @ApiProperty()
   @IsNotEmpty()
   @Type(() => Number)
   @IsNumber()
   offset: number;
 
+  @ApiPropertyOptional()
   @IsOptional()
   @Type(() => Number)
   @IsNumber()

@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsString,
@@ -10,11 +11,13 @@ import {
 } from 'class-validator';
 
 export class GetTemplatesDto {
+  @ApiProperty()
   @IsNotEmpty()
   @Type(() => Number)
   @IsNumber()
   offset: number;
 
+  @ApiPropertyOptional({ minimum: 1, maximum: 30 })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
@@ -23,15 +26,18 @@ export class GetTemplatesDto {
   @Max(30)
   limit: number;
 
+  @ApiPropertyOptional()
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
   authorId: number;
 
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   name: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
   @Type(() => Boolean)
   @IsBoolean()

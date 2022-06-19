@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import analytic from 'analytic';
 import { SendNotificationDto } from 'notification/dto/send-notification.dto';
@@ -32,5 +36,27 @@ export class NotificationService {
     analytic.send('Notified', sendNotificationDto.user.id);
 
     return true;
+  }
+
+  async getUnread(userId: number) {
+    return this.notificationRepository.findBy({
+      user: { id: userId },
+      read: false,
+    });
+  }
+
+  async read(userId: number, notificationId: number) {
+    const notification = await this.notificationRepository.findOneBy({
+      id: notificationId,
+      user: { id: userId },
+      read: false,
+    });
+
+    if (!notification) {
+      throw new NotFoundException('Notification not found');
+    }
+
+    notification.read = true;
+    await notification.save();
   }
 }

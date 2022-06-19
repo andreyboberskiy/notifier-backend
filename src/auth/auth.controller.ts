@@ -8,11 +8,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from 'auth/auth.service';
 import { GetUser, Public } from 'auth/decorators';
 import { SignInDto, SignUpDto } from 'auth/dto';
 import { Tokens } from 'auth/types';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
